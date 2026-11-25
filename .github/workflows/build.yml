@@ -1,6 +1,8 @@
 name: Build APK
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -13,18 +15,25 @@ jobs:
         with:
           python-version: '3.11'
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Build Android APK
-        run: flet build apk --project "WorkoutFlow" --org "com.workout.app"
+        run: flet build apk --yes --project "WorkoutFlow" --org "com.workoutflow.app"
         env:
           CI: true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: workout-apk
+          name: workout-flow-apk
           path: build/apk/*.apk
